@@ -41,6 +41,8 @@ class User:
         return hash_check == self.__password
     
     def add_category(self, category):
+        if category.user_id != self.__id:
+            raise ValueError ("Категория принадлежит другому пользователю")
         self.categories.append(category)
     
 

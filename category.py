@@ -16,4 +16,6 @@ class Category:
             raise ValueError ("Категория должна быть строкой и не должна быть пустой")
         self.__name = name
         
-    
+    @property
+    def user_id(self):
+        return self.__user_id
