@@ -20,16 +20,25 @@ class User:
         if not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', value):
             raise ValueError ("Неправильный Email")
         self.__email = value
+        
+    @property
+    def id(self):
+        return self.__id
     
     @property
     def password(self):
-        return "Password не покажу тебе"
-    
+        raise AttributeError("Нельзя получить значение пароля")
+
     @password.setter
     def password(self, value):
         if not re.match(r'^(?=.*[A-Z])(?=.*\d)(?=.*[^A-Za-z0-9]).+$', value) or len(value) < 8:
             raise ValueError("Пароль должен содержать как минимум одну заглавную букву, одну цифру и один символ и быть больше или равен 8 символам")
         self.__password = self._hash_password(value)
+          
+    @property
+    def salt(self):
+        return self.__salt
+    
     
     def _hash_password(self, raw_password):
         byte_password = raw_password.encode("utf-8")
