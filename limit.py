@@ -15,18 +15,21 @@ class Limit:
         self.__start_date = datetime.date(today.year, today.month, 1)
         self.__end_date = datetime.date(today.year, today.month, last_day)
     
+    def __str__(self):
+        return f"Лимит на период с {self.start_date} по {self.end_date}: {self.__amount}"
+    
     @property
     def amount(self):
         return self.__amount
     
     @amount.setter
     def amount(self, value):
-        if not isinstance(value, int | float) or value < 0:
+        if not isinstance(value, (int, float)) or value < 0:
             raise ValueError("Число должно быть больше или равно нулю")
         self.__amount = value
     
     def update_amount(self, value):
-        if not isinstance(value, int | float) or value < 0:
+        if not isinstance(value, (int,float)) or value < 0:
             raise ValueError("Число должно быть больше или равно нулю")
         self.__amount = value
         
@@ -46,5 +49,3 @@ class Limit:
     def end_date(self):
         return self.__end_date
     
-    def __str__(self):
-        return f"Лимит на период с {self.start_date} по {self.end_date}: {self.__amount}"
