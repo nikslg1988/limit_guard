@@ -2,12 +2,12 @@ import uuid
 import datetime
 
 class Transaction:
-    def __init__(self, user_id, category_id, amount):
-        self.__id = str(uuid.uuid4())
+    def __init__(self, user_id, category_id, amount, id=None, date=None):
+        self.__id = id or str(uuid.uuid4())
         self.__user_id = user_id
         self.__category_id = category_id
         self.amount = amount
-        self.__date = datetime.datetime.now()
+        self.__date = date or datetime.datetime.now()
         
     def __str__(self):
         return f"Транзакция: {self.amount} | категория: {self.__category_id} | дата: {self.__date}"
@@ -50,11 +50,11 @@ class Transaction:
         
     @classmethod
     def from_dict(cls, data):
-        obj = cls(
+        return cls(
             user_id=data["user_id"],
             category_id=data["category_id"],
-            amount=data["amount"]
+            amount=data["amount"],
+            id=data["id"],
+            date=datetime.datetime.fromisoformat(data["date"])            
         )
-        obj.__id = data["id"]
-        obj.__date = datetime.datetime.fromisoformat(data["date"])
-        return obj
+        
