@@ -1,3 +1,4 @@
+from transaction import Transaction
 
 class TransactionManager:
     def __init__(self, users, categories, limits, transactions):
@@ -30,5 +31,22 @@ class TransactionManager:
 
     
     def create_transaction(self, user_id, category_id, amount):
-        pass
+        #Проверяем что юзер существует и что категория 
+        user = self._validate_user(user_id)
+        category = self._validate_category(category_id, user_id)
+        
+        #Проверяем Лимит
+        try:
+            limit = self._validate_limit(category_id, user_id)
+        except:
+            limit = None
+        
+        #Создаем объект transaction
+        transaction = Transaction(user_id = user.id,
+                                  category_id = category.id,
+                                  amount = amount)
+        
+        self.transactions.append(transaction)
+        
+        return transaction
     

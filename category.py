@@ -5,6 +5,10 @@ class Category:
         self.__id = str(uuid.uuid4())
         self.name = name
         self.__user_id = user_id
+    
+    @property
+    def id(self):
+        return self.__id
         
     @property
     def name(self):
