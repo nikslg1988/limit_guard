@@ -41,6 +41,11 @@ class TransactionManager:
         except:
             limit = None
         
+        if limit:
+            if amount > limit.amount:
+                raise ValueError(f"Транзакция на {amount} превышает лимит "
+                                 f"{limit.amount} по категории '{category.name}'")
+        
         #Создаем объект transaction
         transaction = Transaction(user_id = user.id,
                                   category_id = category.id,
