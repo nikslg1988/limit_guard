@@ -16,7 +16,7 @@ class Limit:
         self.__end_date = datetime.date(today.year, today.month, last_day)
     
     def __str__(self):
-        return f"Лимит на период с {self.start_date} по {self.end_date}: {self.__amount}"
+        return f"Лимит на период с {self.start_date} по {self.end_date}: {self.amount}"
     
     @property
     def amount(self):

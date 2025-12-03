@@ -38,7 +38,7 @@ class TransactionManager:
         #Проверяем Лимит
         try:
             limit = self._validate_limit(category_id, user_id)
-        except:
+        except ValueError:
             limit = None
         
         if limit:
