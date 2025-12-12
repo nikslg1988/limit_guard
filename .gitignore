@@ -1,0 +1,8 @@
+# Общие системные и IDE файлы
+*.pyc
+__pycache__/
+venv/
+*.iml
+.idea/
+.vscode/
+.DS_Store
