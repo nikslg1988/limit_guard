@@ -1,4 +1,5 @@
-from models.transaction import Transaction
+from app.models.transaction import Transaction
+from app.core.exceptions import UserNotFoundError, CategoryNotFoundError, CategoryOwnershipError, LimitExceededError, LimitNotFoundError
 
 class TransactionManager:
     def __init__(self, users, categories, limits, transactions):
@@ -9,16 +10,17 @@ class TransactionManager:
         self.transactions = transactions
 
     def _validate_user(self, user_id):
-        if user_id not in self.users_dict:
-            raise ValueError("Пользователь не найден")
+        if user_id not in self.users_dict: 
+            raise UserNotFoundError(user_id)
         return self.users_dict[user_id]
     
     def _validate_category(self, category_id, user_id):
         if category_id not in self.categories_dict:
-            raise ValueError("Категория не найдена")
+            raise CategoryNotFoundError(category_id)
         category = self.categories_dict[category_id]
         if category.user_id != user_id:
-            raise ValueError("Категория принадлежит другому пользователю")
+            
+            raise CategoryOwnershipError(user_id, category_id)
         return category
 
         
@@ -26,7 +28,7 @@ class TransactionManager:
     def _validate_limit(self, category_id, user_id):
         key = (user_id, category_id)
         if key not in self.limits_dict:
-            raise ValueError("Лимит не найден")
+            raise LimitNotFoundError(user_id, category_id)
         return self.limits_dict[key]
 
     
@@ -36,22 +38,22 @@ class TransactionManager:
         category = self._validate_category(category_id, user_id)
         
         #Проверяем Лимит
-        try:
-            limit = self._validate_limit(category_id, user_id)
-        except ValueError:
-            limit = None
+        limit = self.limits_dict.get((user_id, category_id))
         
+        #Вычисляем сколько потрачено на данный момент
+        current_spent = 0 
+        for existing_transaction in self.transactions:
+            if existing_transaction.user_id == user_id and existing_transaction.category_id == category_id:
+                current_spent += existing_transaction.amount
+        #Если лимит существует и сумма трат превышает лимит 
         if limit:
-            if amount > limit.amount:
-                raise ValueError(f"Транзакция на {amount} превышает лимит "
-                                 f"{limit.amount} по категории '{category.name}'")
-        
+            if current_spent + amount > limit.amount:
+                raise LimitExceededError(user_id, category_id, limit.amount, current_spent, amount)
+              
         #Создаем объект transaction
         transaction = Transaction(user_id = user.id,
                                   category_id = category.id,
                                   amount = amount)
-        
         self.transactions.append(transaction)
         
         return transaction
-    
